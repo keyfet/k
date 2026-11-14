@@ -65,11 +65,46 @@ public class MainActivity extends Activity {
     private ValueCallback<Uri[]> webFileChooser;
     private String defaultUserAgent;
     private boolean desktopMode;
+    private LinearLayout toolbar;
+    private Button reveal;
+    private int movementMode;
+    private String movementScript;
+    private final Runnable hideToolbar = () -> {
+        if (!urlBox.hasFocus()) {
+            toolbar.setVisibility(View.GONE);
+            reveal.setVisibility(View.VISIBLE);
+        }
+    };
+
+    private void scheduleHide() {
+        toolbar.removeCallbacks(hideToolbar);
+        if (!urlBox.hasFocus()) toolbar.postDelayed(hideToolbar, 3500);
+    }
+
+    private void chooseMovement() {
+        String[] modes = {"Normal gezinme", "Sayfayı taşı", "Nesneyi taşı"};
+        new AlertDialog.Builder(this).setTitle("Dokunarak taşıma")
+            .setSingleChoiceItems(modes, movementMode, (dialog, which) -> {
+                movementMode = which;
+                getSharedPreferences(PREFS, MODE_PRIVATE).edit().putInt("movement", which).apply();
+                applyMovement();
+                dialog.dismiss();
+            }).show();
+    }
+
+    private void applyMovement() {
+        if (movementScript != null)
+            web.evaluateJavascript(movementScript + "\n;window.__miniTMMove(" + movementMode + ")", null);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         loadScripts();
+        movementMode = getSharedPreferences(PREFS, MODE_PRIVATE).getInt("movement", 0);
+        try (InputStream input = getAssets().open("movement.js")) {
+            movementScript = new String(readAll(input, 300000), StandardCharsets.UTF_8);
+        } catch (Exception e) { toast("Taşıma aracı yüklenemedi"); }
         buildInterface();
         configureWebView();
         refreshInjection();
@@ -93,7 +128,7 @@ public class MainActivity extends Activity {
         button.setMinimumWidth(0);
         button.setPadding(dp(5), 0, dp(5), 0);
         row.addView(button, new LinearLayout.LayoutParams(dp(44), dp(44)));
-        button.setOnClickListener(listener);
+        button.setOnClickListener(v -> { listener.onClick(v); scheduleHide(); });
         return button;
     }
 
@@ -103,7 +138,8 @@ public class MainActivity extends Activity {
         root.setBackgroundColor(Color.WHITE);
         setContentView(root);
 
-        LinearLayout toolbar = new LinearLayout(this);
+        root.setFocusableInTouchMode(true);
+        toolbar = new LinearLayout(this);
         toolbar.setOrientation(LinearLayout.HORIZONTAL);
         toolbar.setGravity(Gravity.CENTER_VERTICAL);
         toolbar.setPadding(dp(2), dp(2), dp(2), dp(2));
@@ -131,6 +167,22 @@ public class MainActivity extends Activity {
         });
         toolbarButton("JS", toolbar, v -> showScriptManager());
 
+        toolbarButton("✥", toolbar, v -> chooseMovement()).setContentDescription("Dokunarak taşıma");
+        reveal = new Button(this);
+        reveal.setText("⌄");
+        reveal.setPadding(0, 0, 0, 0);
+        reveal.setContentDescription("Adres çubuğunu göster");
+        LinearLayout.LayoutParams tab = new LinearLayout.LayoutParams(dp(54), dp(28));
+        tab.gravity = Gravity.CENTER_HORIZONTAL;
+        root.addView(reveal, tab);
+        reveal.setVisibility(View.GONE);
+        reveal.setOnClickListener(v -> {
+            reveal.setVisibility(View.GONE);
+            toolbar.setVisibility(View.VISIBLE);
+            scheduleHide();
+        });
+        urlBox.setOnFocusChangeListener((v, focused) -> scheduleHide());
+        scheduleHide();
         progress = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
         progress.setMax(100);
         root.addView(progress, new LinearLayout.LayoutParams(-1, dp(2)));
@@ -171,6 +223,7 @@ public class MainActivity extends Activity {
             }
             @Override public void onPageFinished(WebView view, String url) {
                 if (documentStartHandler == null) injectFallback();
+                applyMovement();
                 if (!urlBox.hasFocus()) urlBox.setText(url);
                 if (url.startsWith("https://") || url.startsWith("http://")) {
                     getSharedPreferences(PREFS, MODE_PRIVATE).edit().putString("last_url", url).apply();
@@ -474,6 +527,7 @@ public class MainActivity extends Activity {
 
     @Override protected void onDestroy() {
         if (documentStartHandler != null) { documentStartHandler.remove(); documentStartHandler = null; }
+        toolbar.removeCallbacks(hideToolbar);
         if (webFileChooser != null) webFileChooser.onReceiveValue(null);
         if (web != null) { web.stopLoading(); web.destroy(); }
         super.onDestroy();
