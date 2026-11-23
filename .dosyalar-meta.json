@@ -6,48 +6,7 @@
       "historyHead": "c7d94d2b7f507757910700b327a958d30ec42bb0",
       "sha": "09d73c3276a7004408019c071025927085848045",
       "modifiedAt": "2026-11-14T10:39:20.475Z"
-    },
-    "app/.github/settings.gradle": {
-      "historyPath": "settings.gradle",
-      "historyHead": "e4eea89a62429c86f8cacdba6c8d5341f31ec902",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    },
-    "app/.github/Ornek_Betik.user.js": {
-      "historyPath": "Ornek_Betik.user.js",
-      "historyHead": "e4eea89a62429c86f8cacdba6c8d5341f31ec902",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    },
-    "app/.github/gradle.properties": {
-      "historyPath": "gradle.properties",
-      "historyHead": "e4eea89a62429c86f8cacdba6c8d5341f31ec902",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    },
-    "app/.github/build.gradle": {
-      "historyPath": "build.gradle",
-      "historyHead": "e4eea89a62429c86f8cacdba6c8d5341f31ec902",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    },
-    "app/.github/README.md": {
-      "historyPath": "README.md",
-      "historyHead": "e4eea89a62429c86f8cacdba6c8d5341f31ec902",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    },
-    "app/.github/workflows/apk.yml": {
-      "historyPath": ".github/workflows/apk.yml",
-      "historyHead": "c08e500cfe882088b9d0be2dba1e42bb4869706b",
-      "movedAt": "2026-11-23T16:18:38.571Z"
     }
   },
-  "folders": {
-    "app/.github": {
-      "historyPath": ".github",
-      "historyHead": "c08e500cfe882088b9d0be2dba1e42bb4869706b",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    },
-    "app/.github/workflows": {
-      "historyPath": ".github/workflows",
-      "historyHead": "c08e500cfe882088b9d0be2dba1e42bb4869706b",
-      "movedAt": "2026-11-23T16:18:38.571Z"
-    }
-  }
+  "folders": {}
 }
