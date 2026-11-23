@@ -1,0 +1,35 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.winampytm.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.winampytm.app"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "2.95.37"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            applicationIdSuffix ""
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    // Harici kutuphane gerektirmez; saf Android Framework (Activity + WebView) kullanir.
+}

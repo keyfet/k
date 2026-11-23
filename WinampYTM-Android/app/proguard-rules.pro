@@ -1,0 +1,2 @@
+# ProGuard kurallari
+-keepattributes *Annotation*
